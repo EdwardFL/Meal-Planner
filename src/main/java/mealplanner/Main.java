@@ -10,6 +10,7 @@ public class Main {
     private static final String USER = "postgres";
     private static final String PASS = "1111";
     private static List<Meal> meals = new ArrayList<>();
+    private static List<Meal> mealsByCategory = new ArrayList<>();
     public static void main(String[] args) throws SQLException {
 
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
@@ -32,11 +33,7 @@ public class Main {
                         System.out.println("The meal has been added!");
                         break;
                     case "show":
-                        if (meals.isEmpty()) {
-                            System.out.println("No meals saved. Add a meal first.");
-                            break;
-                        }
-                        showMeals(meals);
+                        showMeals(connection, scanner);
                         break;
                 }
             }
@@ -74,8 +71,10 @@ public class Main {
         }
     }
 
-    private static List<String> loadIngredientsForMeal(Connection connection, String selectIngredientsSQL, int mealId) throws SQLException {
+    private static List<String> loadIngredientsForMeal(Connection connection, int mealId) throws SQLException {
         List<String> ingredients = new ArrayList<>();
+        String selectIngredientsSQL = "SELECT * FROM ingredients";
+
         try (PreparedStatement ingredientsStatement = connection.prepareStatement(selectIngredientsSQL)) {
             ResultSet ingredientsResultSet = ingredientsStatement.executeQuery();
 
@@ -89,9 +88,31 @@ public class Main {
         }
         return ingredients;
     }
+
+    private static List<Meal> getMealsByCategory(Connection connection, String categoryChoice) throws SQLException {
+        String selectMealsSQL = "SELECT * FROM meals WHERE category = ?";
+        List<Meal> mealsList = new ArrayList<>();
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectMealsSQL)) {
+            preparedStatement.setString(1, categoryChoice);
+
+            try (ResultSet mealResultSet = preparedStatement.executeQuery()) {
+
+                while (mealResultSet.next()) {
+                    int mealId = mealResultSet.getInt("meal_id");
+                    String category = mealResultSet.getString("category");
+                    String name = mealResultSet.getString("meal");
+                    List<String> ingredients = loadIngredientsForMeal(connection, mealId);
+
+                    Meal meal = new Meal(name, category, ingredients.toArray(new String[0]));
+                    mealsList.add(meal);
+                }
+            }
+        }
+        return mealsList;
+    }
     private static void loadMealsData(Connection connection) throws SQLException {
         String selectMealsSQL = "SELECT * FROM meals";
-        String selectIngredientsSQL = "SELECT * FROM ingredients";
 
         try (Statement statement = connection.createStatement()) {
             ResultSet mealResultSet = statement.executeQuery(selectMealsSQL);
@@ -100,7 +121,7 @@ public class Main {
                 int mealId = mealResultSet.getInt("meal_id");
                 String category = mealResultSet.getString("category");
                 String name = mealResultSet.getString("meal");
-                List<String> ingredients = loadIngredientsForMeal(connection, selectIngredientsSQL, mealId);
+                List<String> ingredients = loadIngredientsForMeal(connection, mealId);
 
                 Meal meal = new Meal(name, category, ingredients.toArray(new String[0]));
                 meals.add(meal);
@@ -108,14 +129,27 @@ public class Main {
         }
     }
 
-    public static void showMeals(List<Meal> meals) {
-        for (Meal meal : meals) {
-            System.out.println("\nCategory: " + meal.getCategory());
-            System.out.println("Name: " + meal.getName());
-            System.out.println("Ingredients:");
-            for (int i = 0; i < meal.getIngredients().length; i++) {
-                System.out.println(meal.getIngredients()[i]);
+    public static void showMeals(Connection connection, Scanner scanner) throws SQLException{
+        System.out.println("Which category do you want to print (breakfast, lunch, dinner)?");
+        String categoryChoice = scanner.nextLine();
+        while (!isValidCategory(categoryChoice)) {
+            System.out.println("Wrong meal category! Choose from: breakfast, lunch, dinner.");
+            categoryChoice = scanner.nextLine();
+        }
+
+        mealsByCategory = getMealsByCategory(connection, categoryChoice);
+        if (!mealsByCategory.isEmpty()) {
+            System.out.println("\nCategory: " + categoryChoice);
+            for (Meal meal : mealsByCategory) {
+                System.out.println("Name: " + meal.getName());
+                System.out.println("Ingredients:");
+                for (int i = 0; i < meal.getIngredients().length; i++) {
+                    System.out.println(meal.getIngredients()[i]);
+                }
+
             }
+        } else {
+            System.out.println("No meals found.");
         }
     }
 
