@@ -1,4 +1,7 @@
 package mealplanner;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,6 +15,7 @@ public class Main {
     private static final String PASS = "1111";
     private static List<Meal> meals = new ArrayList<>();
     private static List<Meal> mealsByCategory = new ArrayList<>();
+    private static boolean IS_PLAN_SAVED = false;
     public static void main(String[] args) throws SQLException {
 
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
@@ -22,7 +26,7 @@ public class Main {
             String userInput;
 
             while (true) {
-                System.out.println("What would you like to do (add, show, plan, exit)?");
+                System.out.println("What would you like to do (add, show, plan, save, exit)?");
                 userInput = scanner.nextLine();
                 switch (userInput) {
                     case EXIT:
@@ -38,6 +42,15 @@ public class Main {
                         break;
                     case "plan":
                         printPlannedMeals(connection, scanner);
+                        break;
+                    case "save":
+                        if(!isPlanSaved(connection))
+                        {
+                            System.out.println("Unable to save. Plan your meals first.");
+                            break;
+                        } else {
+                            saveShoppingListToAFile(connection, scanner);
+                        }
                         break;
                 }
             }
@@ -104,6 +117,49 @@ public class Main {
         return ingredients;
     }
 
+    private static void saveShoppingListToAFile(Connection connection, Scanner scanner) {
+        try {
+            System.out.println("Input a filename:");
+            String filename = scanner.nextLine();
+
+            String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+
+            try (PrintWriter printWriter = new PrintWriter(filename)){
+                getShoppingListForWeek(connection, printWriter);
+            }
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Saved!");
+    }
+
+    private static boolean isPlanSaved(Connection connection) throws SQLException {
+        String checkPlanSQL = "SELECT COUNT(*) AS count FROM plan";
+
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(checkPlanSQL)) {
+            resultSet.next();
+            int rowCount = resultSet.getInt("count");
+            return rowCount > 0;
+        }
+    }
+
+    private static void getShoppingListForWeek(Connection connection, PrintWriter printWriter) throws SQLException {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(
+                "SELECT ingredient, SUM(1) as total_count FROM ingredients " +
+                        "JOIN plan ON ingredients.meal_id = plan.meal_id_meals " +
+                        "GROUP BY ingredient"
+        )) {
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    String ingredient = resultSet.getString("ingredient");
+                    int totalCount = resultSet.getInt("total_count");
+                    String shoppingListItem = totalCount > 1 ? ingredient + " x" + totalCount : ingredient;
+                    printWriter.println(shoppingListItem);
+                }
+            }
+        }
+    }
     private static List<Meal> getMealsByCategory(Connection connection, String categoryChoice) throws SQLException {
         String selectMealsSQL = "SELECT * FROM meals WHERE category = ?";
         List<Meal> mealsList = new ArrayList<>();
