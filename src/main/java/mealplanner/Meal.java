@@ -1,6 +1,6 @@
 package mealplanner;
 
-public class Meal {
+public class Meal implements Comparable<Meal>{
     private String name;
     private String category;
     private String[] ingredients;
@@ -21,5 +21,10 @@ public class Meal {
 
     public String[] getIngredients() {
         return ingredients;
+    }
+
+    @Override
+    public int compareTo(Meal otherMeal) {
+        return this.getName().compareToIgnoreCase(otherMeal.getName());
     }
 }
