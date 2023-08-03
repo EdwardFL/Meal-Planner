@@ -1,8 +1,10 @@
 .gradle
+gradle/wrapper/
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
@@ -12,9 +14,18 @@ build/
 *.iws
 *.iml
 *.ipr
+.idea/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+
+# Compiled Java files
+*.class
+
+# Build artifacts
+*.jar
+*.war
+*.ear
 
 ### Eclipse ###
 .apt_generated
@@ -40,3 +51,11 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+# Logs
+*.log*
+out/
+
+# Temporary files
+*.swp
+*~
