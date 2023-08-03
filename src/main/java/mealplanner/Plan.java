@@ -17,24 +17,12 @@ public class Plan {
         return mealOption;
     }
 
-    public void setMealOption(String mealOption) {
-        this.mealOption = mealOption;
-    }
-
     public String getMealCategory() {
         return mealCategory;
     }
 
-    public void setMealCategory(String mealCategory) {
-        this.mealCategory = mealCategory;
-    }
-
     public int getMealIdMeals() {
         return mealIdMeals;
-    }
-
-    public void setMealIdMeals(int mealIdMeals) {
-        this.mealIdMeals = mealIdMeals;
     }
 
     public String getMealDay() {

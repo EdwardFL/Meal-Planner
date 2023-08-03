@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1fae7957-9bc0-4764-8157-667a3f7c5dc9" name="Changes" comment="Remove already tracked files">
+    <list default="true" id="1fae7957-9bc0-4764-8157-667a3f7c5dc9" name="Changes" comment="Implement save option - Save ingredients in a file">
+      <change afterPath="$PROJECT_DIR$/src/main/java/mealplanner/DatabaseManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/mealplanner/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mealplanner/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mealplanner/Plan.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mealplanner/Plan.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,7 +86,8 @@
       <workItem from="1690722173573" duration="702000" />
       <workItem from="1690915683903" duration="675000" />
       <workItem from="1691051250190" duration="1787000" />
-      <workItem from="1691055428086" duration="96000" />
+      <workItem from="1691055428086" duration="193000" />
+      <workItem from="1691056918858" duration="7310000" />
     </task>
     <task id="LOCAL-00001" summary="Initialize MealPlanner project">
       <created>1690711462450</created>
@@ -157,7 +159,14 @@
       <option name="project" value="LOCAL" />
       <updated>1691052189865</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Implement save option - Save ingredients in a file">
+      <created>1691055610330</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1691055610330</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -182,6 +191,7 @@
     <MESSAGE value="Updated the gitignore" />
     <MESSAGE value="Update gitignore" />
     <MESSAGE value="Remove already tracked files" />
-    <option name="LAST_COMMIT_MESSAGE" value="Remove already tracked files" />
+    <MESSAGE value="Implement save option - Save ingredients in a file" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implement save option - Save ingredients in a file" />
   </component>
 </project>
